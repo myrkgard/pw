@@ -7,6 +7,7 @@ services:
             - "80:80"
         depends_on:
             - pwwebsite
+            - pwdashboard
             - pwapi
 
     pwwebsite:
@@ -14,15 +15,22 @@ services:
         depends_on:
             - pwapi
 
+    pwdashboard:
+        image: ghcr.io/myrkgard/pwdashboard:latest
+        depends_on:
+            - pwapi
+
     pwapi:
         image: ghcr.io/myrkgard/pwapi:latest
         environment:
             - MONGODB_CONNSTRING=mongodb://rootusername:rootpassword@pwmongodb
+        depends_on:
+            - pwmongodb
 
     pwmongodb:
         image: mongo
         volumes:
-            - data:/data
+            - data:/data/db
         environment:
             - MONGO_INITDB_ROOT_USERNAME=rootusername
             - MONGO_INITDB_ROOT_PASSWORD=rootpassword
